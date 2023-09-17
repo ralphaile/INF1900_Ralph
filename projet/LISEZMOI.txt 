@@ -1,0 +1,18 @@
+DETECTION:
+
+Notre class capteur gère la detection et l'enregistrement des poteaux. On a plusieur état pour les différentes étape de la detection:
+
+-STANDBY: on rentre dans cet état après la première détection. On part un timer de 250 ms pour qu'on puisse clignoter notre LED en ambre à 2Hz durant l'attente.Puis quand on appuie le bouton, on part un nouveau timer de 100ms qui sera utile dans l'état SCAN.
+
+-SCAN: On tourne la roue gauche uniquement ce qui fait que nous tournons vers la droite tant qu'on ne détecte rien. Si on ne détecte rien, nous avons un compteur qui s'incrémente chaque 100ms. Nous connaissons qu'un tour complet prend 6.2 secondes. Ainsi, si notre compteur dépasses 62 alors on a fait un tour complet et aucun objet a été détecté, on passe à l'état END. Dans le cas où un objet est détecté, nous calculons l'angle sachant la durée que notre robot prend pour faire un 360 degrés. Le calcul de l'angle est relativement facile en utilisant le compteur puis en arrondissant au multiple de 45 le plus proche.
+
+-OBJECT_DETECTED: cet état est plus transitif, on arrête les roues et on passe à l'état REGISTER_OBJECT.
+
+-REGISTER_OBJECT: en utilisant la puissance captée quand l'objet est détecté, nous pouvons savoir si celui ci se trouve à 1 ou 2 carré (11 ou 22 pouces) de notre position.Ensuite, si l'angle n'est pas un multiple de 90, on se trouve sur la diagonale, on multiplie donc la distance par racine de 2.En utilisant la distance et l'angle, le calcule de la position revient donc à une formule mathématique. Mais comme on considère l'angle 0 sur la verticale, la formule devient x=r*sin(angle)  y=r*cos(angle). La liste de point est ensuite inscrite en mémoire.
+
+-FIND_OBJECT: On se dirige vers l'objet mais vu que les roues ne sont pas consistents, il se peut qu'on ne le voit plus. Ainsi, quand on perd l'objet nous tournons vers la gauche puis on recherche à le capter en tournant à droite. Dès qu'on le recapte, on se dirige directe. On emet le son puis passons au mode standby.
+
+-END: Quand on ne détecte rien, on fait le son grave pour 2 secondes puis on sort de la detection.
+
+
+TRANSMISSION:
